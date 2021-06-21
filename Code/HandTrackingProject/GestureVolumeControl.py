@@ -15,7 +15,7 @@ wCam, hCam = 1280, 720
 cap = cv2.VideoCapture(1)
 cap.set(3, wCam)
 cap.set(4, hCam)
-detector = htm.handDetector(max_hands=2, detection_confidence=0.7)
+detector = htm.handDetector(max_hands=1, detection_confidence=0.7)
 
 devices = AudioUtilities.GetSpeakers()
 interface = devices.Activate(
@@ -25,11 +25,12 @@ volume = cast(interface, POINTER(IAudioEndpointVolume))
 # volume.GetMasterVolumeLevel()
 volumeRange = volume.GetVolumeRange()
 
-
 minVol = volumeRange[0]
 maxVol = volumeRange[1]
 bar_vol = 400
 percent_vol = 0
+
+vol_checking = True
 
 # Initializing previous time and current time to calculate fps later on
 pTime = 0
@@ -51,39 +52,54 @@ while True:
         # Label the x, y coordinates of the index and thumb
         x1, y1 = lmklist[4][1], lmklist[4][2]
         x2, y2 = lmklist[8][1], lmklist[8][2]
+
+        y3 = lmklist[12][2]
+        y4 = lmklist[9][2]
+
+        y5 = lmklist[16][2]
+        y6 = lmklist[13][2]
+
+        y7 = lmklist[20][2]
+        y8 = lmklist[17][2]
+
         cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
 
-        # Draw a circle on the targeted fingers
-        cv2.circle(img, (x1, y1), 10, (255, 0, 255), cv2.FILLED)
-        cv2.circle(img, (x2, y2), 10, (255, 0, 255), cv2.FILLED)
+        # Checking for gesture to change the volume
+        if y3 < y4 and y5 < y6 and y7 < y8:
+            vol_checking = True
 
-        # Drawing line between target fingers
-        cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 3)
-        cv2.circle(img, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
+        else:
+            vol_checking = False
 
-        length = math.hypot(x2 - x1, y2 - y1)
+        # Vol checking section
+        if vol_checking:
+            # Draw a circle on the targeted fingers
+            cv2.circle(img, (x1, y1), 10, (255, 0, 255), cv2.FILLED)
+            cv2.circle(img, (x2, y2), 10, (255, 0, 255), cv2.FILLED)
 
-        # Hand Range is 50 -> 300
-        # Volume Range -65 -> 0
+            # Drawing line between target fingers
+            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 3)
+            cv2.circle(img, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
 
-        vol = np.interp(length, [50, 350], [minVol, maxVol])
-        bar_vol = np.interp(length, [50, 350], [400, 150])
-        percent_vol = np.interp(length, [50, 350], [0, 100])
+            length = math.hypot(x2 - x1, y2 - y1)
 
-        volume.SetMasterVolumeLevel(vol, None)
+            # Hand Range is 50 -> 300
+            # Volume Range -65 -> 0
 
-        print(vol, int(length))
+            vol = np.interp(length, [50, 250], [minVol, maxVol])
+            bar_vol = np.interp(length, [50, 250], [400, 150])
+            percent_vol = np.interp(length, [50, 250], [0, 100])
 
-        if length < 50:
-            cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED)
+            volume.SetMasterVolumeLevel(vol, None)
 
-    cv2.rectangle(img, (50, 150), (85, 400), (0, 255, 0), 3)
-    cv2.rectangle(img, (50, int(bar_vol)), (85, 400), (0, 255, 0), cv2.FILLED)
-    cv2.putText(img, f'{int(percent_vol)} %', (40, 450), cv2.FONT_HERSHEY_PLAIN, 2.5, (0, 255, 0), 2)
+            print(vol, int(length))
 
+            if length < 50:
+                cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED)
 
-
-
+        cv2.rectangle(img, (50, 150), (85, 400), (0, 255, 0), 3)
+        cv2.rectangle(img, (50, int(bar_vol)), (85, 400), (0, 255, 0), cv2.FILLED)
+        cv2.putText(img, f'{int(percent_vol)} %', (40, 450), cv2.FONT_HERSHEY_PLAIN, 2.5, (0, 255, 0), 2)
 
     # Calculating FPS
     cTime = time.time()

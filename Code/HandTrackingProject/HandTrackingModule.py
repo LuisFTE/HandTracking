@@ -58,7 +58,7 @@ class handDetector():
                         cv2.circle(img, (cx, cy), 10, (0, 255, 255), cv2.FILLED)
                         cv2.putText(img, "Hand is far", (0, 630), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 255, 255), 2)
 
-                    if (id == 4 or id == 8 or id == 12 or id == 16 or id == 20) and ((landmark.z*-1) >= .1 and (landmark.z*-1) <= .18):
+                    if (id == 4 or id == 8 or id == 12 or id == 16 or id == 20) and (.1 <= (landmark.z * -1) <= .18):
                         cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED)
                         cv2.putText(img, "Hand is at a good view!", (0, 645), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 255, 0), 2)
 
