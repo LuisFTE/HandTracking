@@ -28,8 +28,8 @@ class handDetector():
         if self.results.multi_hand_landmarks:
             # We will loop to see how many hands are being detected
             for handLandmarks in self.results.multi_hand_landmarks:
-                # Draw the landmarks on img (We are drawing on the img and not on the rgb because we are outputing the img
-                # not the RGBimg)
+                # Draw the landmarks on img (We are drawing on the img and not on the rgb because we are
+                # outputting the img not the RGBimg)
                 # handLandmarks is the points and the mp.Hands.HAND_CONNECTIONS are the connecting lines
                 if draw:
                     self.mpDraw.draw_landmarks(img, handLandmarks, self.mpHands.HAND_CONNECTIONS)
@@ -50,26 +50,23 @@ class handDetector():
                 # Calculate the pixel location of landmarks (landmark.x and .y are the x y ratio of the image we are
                 # multiplying by the actual size to find the pixel location)
                 cx, cy = int(landmark.x * w), int(landmark.y * h)
-                #print(id, cx, cy)
+                # print(id, cx, cy)
                 landmarklist.append([id, cx, cy])
 
                 if draw:
                     if (id == 4 or id == 8 or id == 12 or id == 16 or id == 20) and (landmark.z*-1) < .1:
                         cv2.circle(img, (cx, cy), 10, (0, 255, 255), cv2.FILLED)
-                        cv2.putText(img, "Hand is far", (0, 400), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 255, 255), 2)
+                        cv2.putText(img, "Hand is far", (0, 630), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 255, 255), 2)
 
                     if (id == 4 or id == 8 or id == 12 or id == 16 or id == 20) and ((landmark.z*-1) >= .1 and (landmark.z*-1) <= .18):
                         cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED)
-                        cv2.putText(img, "Hand is at a good view!", (0, 425), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 255, 0), 2)
+                        cv2.putText(img, "Hand is at a good view!", (0, 645), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 255, 0), 2)
 
                     if (id == 4 or id == 8 or id == 12 or id == 16 or id == 20) and (landmark.z*-1) > .18:
                         cv2.circle(img, (cx, cy), 10, (0, 0, 255), cv2.FILLED)
-                        cv2.putText(img, "Hand is very close", (0, 450), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 0, 255), 2)
-
-
+                        cv2.putText(img, "Hand is very close", (0, 700), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 0, 255), 2)
 
         return landmarklist
-
 
 
 def main():
@@ -105,7 +102,6 @@ def main():
         # Display image
         cv2.imshow("Image", img)
         cv2.waitKey(1)
-
 
 
 if __name__ == "__main__":
