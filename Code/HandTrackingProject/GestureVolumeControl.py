@@ -15,7 +15,7 @@ wCam, hCam = 1280, 720
 cap = cv2.VideoCapture(1)
 cap.set(3, wCam)
 cap.set(4, hCam)
-detector = htm.handDetector(max_hands=1, detection_confidence=0.7)
+detector = htm.handDetector(max_hands=1, detection_confidence=0.75)
 
 devices = AudioUtilities.GetSpeakers()
 interface = devices.Activate(
